@@ -29,6 +29,16 @@ app.listen(3008, () => {
 });
 ```
 
+### 주기적으로 전화를 받기 위해서는 Crontab을 설정하는 걸 권장합니다.
+아래와 같이 크론 표현식을 서버에 설정합니다.
+```bash
+## 평일 저녁 7시에 전화를 받고싶은 경우 (서버시간 UTC)
+0 10 * * 1-5 curl -X POST "https://example-twilio-webhook.com/call?to=1012345678"
+
+## 매일 저녁 6시에 전화를 받고싶은 경우 (서버시간 UTC)
+0 9 * * * curl -X POST "https://example-twilio-webhook.com/call?to=1012345678"
+```
+
 ## Environment Variables
 ```
 TWILIO_ACCOUNT_SID=""
