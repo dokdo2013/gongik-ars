@@ -46,3 +46,6 @@ TWILIO_AUTH_TOKEN=""
 TWILIO_PHONE_NUMBER=""
 API_BASE_URL=""
 ```
+
+## LICENSE
+[GNU General Public License v3.0](https://github.com/dokdo2013/gongik-ars/blob/main/LICENSE)
