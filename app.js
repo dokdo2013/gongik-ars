@@ -1,18 +1,24 @@
+// Import required modules
 require("dotenv").config();
 const express = require("express");
-const app = express();
 const twilio = require("twilio");
 const VoiceResponse = twilio.twiml.VoiceResponse;
 
+// Set up Express app and Twilio client
+const app = express();
 const apiBaseUrl = process.env.API_BASE_URL;
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const fromPhone = process.env.TWILIO_PHONE_NUMBER;
-
 const client = new twilio(accountSid, authToken);
 
+// Configure Express middleware to parse URL-encoded body
 app.use(express.urlencoded({ extended: false }));
 
+/**
+ * Initiates a phone call to the given phone number.
+ * @param {string} toPhone - The phone number to call.
+ */
 function makeCall(toPhone) {
   client.calls
     .create({
@@ -24,11 +30,13 @@ function makeCall(toPhone) {
     .catch((err) => console.error(err));
 }
 
+// Handle the voice call with user input
 app.post("/voice", (req, res) => {
   const pressedKey = req.body.Digits;
   const toPhone = req.query.to;
   const response = new VoiceResponse();
 
+  // If no key is pressed, prompt the user for input
   if (!pressedKey) {
     const gather = response.gather({
       input: "dtmf",
@@ -40,7 +48,22 @@ app.post("/voice", (req, res) => {
       "산업기능요원 퇴근 기록은 하셨나요? 기록했다면 1번, 찍는 날이 아니라면 2번, 잠시 후 찍겠다면 3번을 눌러주세요.",
       { language: "ko-KR" }
     );
-  } else if (!["1", "2", "3"].includes(pressedKey)) {
+  } else {
+    handleKeyPress(response, pressedKey, toPhone);
+  }
+
+  res.type("text/xml");
+  res.send(response.toString());
+});
+
+/**
+ * Handles the user's key press during the phone call.
+ * @param {VoiceResponse} response - The TwiML response.
+ * @param {string} pressedKey - The key the user pressed.
+ * @param {string} toPhone - The phone number that received the call.
+ */
+function handleKeyPress(response, pressedKey, toPhone) {
+  if (!["1", "2", "3"].includes(pressedKey)) {
     response.say("잠시 후에 다시 확인하겠습니다.", { language: "ko-KR" });
     response.hangup();
     setTimeout(() => makeCall(toPhone), 3 * 60 * 1000);
@@ -52,11 +75,9 @@ app.post("/voice", (req, res) => {
     response.say("확인되었습니다.", { language: "ko-KR" });
     response.hangup();
   }
+}
 
-  res.type("text/xml");
-  res.send(response.toString());
-});
-
+// Initiates a phone call when the /call endpoint is requested
 app.post("/call", (req, res) => {
   const toPhone = req.query.to;
   if (!toPhone) {
@@ -68,6 +89,7 @@ app.post("/call", (req, res) => {
   res.status(200).send("Phone call initiated");
 });
 
+// Start the server
 app.listen(3008, () => {
   console.log("Server listening on port 3008");
 });
