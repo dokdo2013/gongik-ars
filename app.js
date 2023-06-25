@@ -89,6 +89,10 @@ app.post("/call", (req, res) => {
   res.status(200).send("Phone call initiated");
 });
 
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
+
 // Start the server
 app.listen(3008, () => {
   console.log("Server listening on port 3008");
