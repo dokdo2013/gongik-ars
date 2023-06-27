@@ -75,33 +75,24 @@ app.post("/voice", (req, res) => {
  */
 function handleKeyPress(response, pressedKey, toPhone) {
   if (!["1", "2", "3"].includes(pressedKey)) {
-    response.say(
-      "잠시 후에 다시 확인하겠습니다.", 
-      {
-        language: "ko-KR",
-        voice: voicePool[Math.floor(Math.random() * voicePool.length)],
-      }
-    );
+    response.say("잠시 후에 다시 확인하겠습니다.", {
+      language: "ko-KR",
+      voice: voicePool[Math.floor(Math.random() * voicePool.length)],
+    });
     response.hangup();
     setTimeout(() => makeCall(toPhone), 3 * 60 * 1000);
   } else if (pressedKey === "3") {
-    response.say(
-      "잠시 후에 다시 확인하겠습니다.", 
-      {
-        language: "ko-KR",
-        voice: voicePool[Math.floor(Math.random() * voicePool.length)],
-      }
-    );
+    response.say("잠시 후에 다시 확인하겠습니다.", {
+      language: "ko-KR",
+      voice: voicePool[Math.floor(Math.random() * voicePool.length)],
+    });
     response.hangup();
     setTimeout(() => makeCall(toPhone), 5 * 60 * 1000);
   } else {
-    response.say(
-      "확인되었습니다.", 
-      {
-        language: "ko-KR",
-        voice: voicePool[Math.floor(Math.random() * voicePool.length)],
-      }
-    );
+    response.say("확인되었습니다.", {
+      language: "ko-KR",
+      voice: voicePool[Math.floor(Math.random() * voicePool.length)],
+    });
     response.hangup();
   }
 }
