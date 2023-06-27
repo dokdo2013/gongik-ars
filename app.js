@@ -15,6 +15,14 @@ const client = new twilio(accountSid, authToken);
 // Configure Express middleware to parse URL-encoded body
 app.use(express.urlencoded({ extended: false }));
 
+const voicePool = [
+  "Polly.Seoyeon",
+  "Google.ko-KR-Standard-A",
+  "Google.ko-KR-Standard-B",
+  "Google.ko-KR-Standard-C",
+  "Google.ko-KR-Standard-D",
+];
+
 /**
  * Initiates a phone call to the given phone number.
  * @param {string} toPhone - The phone number to call.
@@ -46,7 +54,10 @@ app.post("/voice", (req, res) => {
     });
     gather.say(
       "산업기능요원 퇴근 기록은 하셨나요? 기록했다면 1번, 찍는 날이 아니라면 2번, 잠시 후 찍겠다면 3번을 눌러주세요.",
-      { language: "ko-KR" }
+      {
+        language: "ko-KR",
+        voice: voicePool[Math.floor(Math.random() * voicePool.length)],
+      }
     );
   } else {
     handleKeyPress(response, pressedKey, toPhone);
@@ -64,15 +75,33 @@ app.post("/voice", (req, res) => {
  */
 function handleKeyPress(response, pressedKey, toPhone) {
   if (!["1", "2", "3"].includes(pressedKey)) {
-    response.say("잠시 후에 다시 확인하겠습니다.", { language: "ko-KR" });
+    response.say(
+      "잠시 후에 다시 확인하겠습니다.", 
+      {
+        language: "ko-KR",
+        voice: voicePool[Math.floor(Math.random() * voicePool.length)],
+      }
+    );
     response.hangup();
     setTimeout(() => makeCall(toPhone), 3 * 60 * 1000);
   } else if (pressedKey === "3") {
-    response.say("잠시 후에 다시 확인하겠습니다.", { language: "ko-KR" });
+    response.say(
+      "잠시 후에 다시 확인하겠습니다.", 
+      {
+        language: "ko-KR",
+        voice: voicePool[Math.floor(Math.random() * voicePool.length)],
+      }
+    );
     response.hangup();
     setTimeout(() => makeCall(toPhone), 5 * 60 * 1000);
   } else {
-    response.say("확인되었습니다.", { language: "ko-KR" });
+    response.say(
+      "확인되었습니다.", 
+      {
+        language: "ko-KR",
+        voice: voicePool[Math.floor(Math.random() * voicePool.length)],
+      }
+    );
     response.hangup();
   }
 }
